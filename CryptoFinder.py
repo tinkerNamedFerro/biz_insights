@@ -2,29 +2,38 @@ import requests
 import bs4
 import os
 import re
-import CoinDict
+from CoinDict import *
 import pprint
 import json
 import hashlib
 import openpyxl
 import datetime
 import time
+from tqdm import tqdm
 
 from selenium import webdriver
 
-CD = CoinDict.dict
+
+# Generate list of coins
+generateCurrenciesList()    
+# Load json file for coin list 
+with open('data.json') as json_file:
+    CD = json.load(json_file)
 
 def ThreadIDGet():
-    os.remove('tids.txt')
+    try:
+        os.remove('tids.txt')
+    except:
+        print("Did NOT delete tids.txt")
     url = 'http://boards.4chan.org/biz/catalog'
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome()
     driver.get(url)
     res = driver.page_source
     soup = bs4.BeautifulSoup(res, 'lxml')
     body = soup.find('body')
     content = body.find(id="content")
     thread = content.find(id="threads")
-    ThR = re.compile(r'(thread-)(\d\d\d\d\d\d\d)')
+    ThR = re.compile(r'(thread-)(\d\d\d\d\d\d\d\d)')
 
     threadlist = ThR.findall(str(thread))
     ThreadIDs = open("tids.txt", 'a')
@@ -35,23 +44,27 @@ def ThreadIDGet():
     ThreadIDs.close()
 
 def TextGet():
-    os.remove('text.txt')
+    try:
+        os.remove('text.txt')
+    except:
+        print("Did NOT delete text.txt")
     tids = open('tids.txt','r')
     tlist = tids.readlines()
 
-    for i in range(0, len(tlist)-1):
+    print("Scanning threads")
+    for i in tqdm(range(0, len(tlist)-1)):
         url = 'http://boards.4chan.org/biz/thread/' + tlist[i]
-        #print(url)
         res = requests.get(url)
 
         soup = bs4.BeautifulSoup(res.content,"html.parser")
-
+        # print(soup.prettify())
+        # return
         textelems = soup.select('blockquote')
         file = open('text.txt','a')
 
-        idf = re.compile(r'(id="m)(\d\d\d\d\d\d\d)')
+        idf = re.compile(r'(id="m)(\d\d\d\d\d\d\d\d)')
 
-        file.write('Thread#' + str(i) + '\n')
+        file.write('Thread#' + str(tlist[i]) + '\n')
         for i in range(0,len(textelems)):
             mo = idf.search(str(textelems[i]))
             id = mo.group(2)
@@ -61,10 +74,10 @@ def TextGet():
         file.close()
     print('Scrape Complete')
 
-def Count(coin):
+def Count(row):
     file = open('text.txt', 'r')
     postlist = file.readlines()
-    checklist = [CD[coin]['aka'][0],CD[coin]['aka'][0].lower(),(CD[coin]['name']),(CD[coin]['name'].lower())]
+    checklist = [row['aka'][0],row['aka'][0].lower(),(row['name']),(row['name'].lower())]
     Count = 0
     print(checklist)
     for i in range(0,len(postlist)):
@@ -80,7 +93,7 @@ def Count(coin):
 def NewBook(Name):
     wb = openpyxl.Workbook()
     print(type(wb))
-    inp = wb.get_active_sheet()
+    inp = wb.active
     print(type(inp))
     inp['B1']='TIME'
     inp['A2']='Coin'
@@ -88,9 +101,9 @@ def NewBook(Name):
     inp.freeze_panes = 'C1'
 
     x = 0
-    for i in range(0, 251):
+    for row in CD:
         try:
-            inp['A{}'.format(str(x + 3))] = CD[i]['name']
+            inp['A{}'.format(str(x + 3))] = row['name']
             inp['B{}'.format(str(x + 3))] = 'BVol'
             inp['B{}'.format(str(x + 4))] = 'Price'
             inp['B{}'.format(str(x + 5))] = 'Posts'
@@ -106,7 +119,7 @@ def Update():
     emptychk = 3
     x = 3
     wb = openpyxl.load_workbook('tester.xlsx')
-    inp = wb.get_active_sheet()
+    inp = wb.active
     refC = inp.cell(row = 3,column = emptychk)
     while refC.value != None:
         emptychk += 1
@@ -114,25 +127,25 @@ def Update():
     inp.cell(row = 1, column = emptychk).value = datetime.datetime.now()
     #Update Volume
     print('UPDATING')
-    for i in range(0, 251):
+    for row in CD:
         try:
-            url = 'https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-' + CD[i]['aka'][0].lower()
-            data = json.loads(requests.get(url).text)
-            data = data['result']
-            volume = data[0]['BaseVolume']
-            price = data[0]['Last']
+            data = get24HrStats(row["aka"][0].upper())
+            data = data["data"]
+            volume = data['vol']
+            price = data['last']
             VCell = inp.cell(row=x, column=emptychk)
             PCell = inp.cell(row=x + 1, column=emptychk)
             CCell = inp.cell(row=x + 2, column=emptychk)
             VCell.value = volume
             PCell.value = price
-            CCell.value = Count(i)
-            print(str(i))
-            print(str(CCell.value) + 'writing to: ' + str(emptychk) + ' , ' + str(x + 2))
+            CCell.value = Count(row)
+            #print(str(row['aka'][0]))
+            #print(str(CCell.value) + ' writing to: ' + str(emptychk) + ' , ' + str(x + 2))
             x += 5
         except:
-            print(str(i) + ' Coin Not Found')
+            print(str(row['aka'][0]) + ' Not Found')
             continue
+        
     print('UPDATED')
     wb.save('tester.xlsx')
 

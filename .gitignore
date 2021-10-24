@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.log
+.env
+data.json
+tester.xlsx
+test.txt
+text.txt
