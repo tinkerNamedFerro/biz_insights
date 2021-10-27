@@ -12,6 +12,11 @@ ReadtoRFile is an optional bit of code that reads from the Excel file into R cod
 * Progress bar for thread parsing 
 * Changed to use chromium (default exe location C:/windows)
 * .env file for kucoin api keys
+#### 1.02
+* Added mongodb db support 
+* Record tickers into collection 
+* Ticker blacklist for common word ticker names 
+* Ability to extract image,message,mentions from thread
 
 
 # Todo
@@ -24,4 +29,9 @@ ReadtoRFile is an optional bit of code that reads from the Excel file into R cod
 2)
 ```python
 python3.7 .\CryptoFinder.py
+```
+
+## Update requirements
+```py
+python3.7 -m pipreqs.pipreqs --force
 ```

@@ -1,6 +1,8 @@
 from kucoin_api.Kucoin import *
 import json
 
+blackList = ["KEEP", "FLOW", "MASK", "SUPER","SCLP", "GO", "MATTER","MASK", "NFT", "TIME", "JST", "MAN", "FEAR", "LAYER", "WIN", "GOD", "BUY","PUSH", "FORM", "FRONT", "SNT", "CARD", "STND", "ASK"]
+
 def generateCurrenciesList():
     # calling kucoin api to get all coins
     currenciesResponse = getCurrencies()
@@ -11,7 +13,9 @@ def generateCurrenciesList():
         name = row["fullName"]
 
         coin = {"aka":[ticker], 'name':name}
-        coins.append(coin)
+        # Don't add ticker if in blacklist
+        if ticker not in blackList:
+            coins.append(coin)
 
     # save all coins in json
     with open('data.json', 'w', encoding='utf-8') as f:

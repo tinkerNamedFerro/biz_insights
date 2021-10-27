@@ -2,16 +2,19 @@ import requests
 import bs4
 import os
 import re
-from CoinDict import *
 import pprint
 import json
 import hashlib
 import openpyxl
 import datetime
 import time
-from tqdm import tqdm
 
+from tqdm import tqdm
 from selenium import webdriver
+
+from CoinDict import *
+from ChanScapes import *
+from mongo_db.tickerTable import *
 
 
 # Generate list of coins
@@ -52,26 +55,13 @@ def TextGet():
     tlist = tids.readlines()
 
     print("Scanning threads")
+    tickerDb = MongoDB_Biz_Ticker_Mentions()
     for i in tqdm(range(0, len(tlist)-1)):
         url = 'http://boards.4chan.org/biz/thread/' + tlist[i]
-        res = requests.get(url)
 
-        soup = bs4.BeautifulSoup(res.content,"html.parser")
-        # print(soup.prettify())
-        # return
-        textelems = soup.select('blockquote')
-        file = open('text.txt','a')
+        # threadJson = fullThreadScrape(tlist[i][:-2],url)
+        threadJson = tickerOnlyScrape(tlist[i],url,tickerDb)
 
-        idf = re.compile(r'(id="m)(\d\d\d\d\d\d\d\d)')
-
-        file.write('Thread#' + str(tlist[i]) + '\n')
-        for i in range(0,len(textelems)):
-            mo = idf.search(str(textelems[i]))
-            id = mo.group(2)
-            dat = str(textelems[i].getText().encode('utf-8'))+'\n'
-            file.write(str(id) + '::' + dat[1:])
-        file.write('\n')
-        file.close()
     print('Scrape Complete')
 
 def Count(row):
@@ -151,8 +141,10 @@ def Update():
 
 NewBook('tester')
 while True:
-    ThreadIDGet()
-    TextGet()
+    
+    while True:
+        ThreadIDGet()
+        TextGet()
     Update()
 
 
