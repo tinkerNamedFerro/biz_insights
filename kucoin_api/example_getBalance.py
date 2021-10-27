@@ -6,9 +6,11 @@ import hashlib
 import requests
 import json
 import pprint
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
 api_key = os.environ.get('KUCOINKEY')
 api_secret = os.environ.get('KUCOINSECRET')
 api_passphrase = os.environ.get('KUCOINPASS')
