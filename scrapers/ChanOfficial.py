@@ -83,8 +83,8 @@ def fullThreadScrape(threadId, url):
     return thread
 
 
-def tickerOnlyScrape(threadId, url, tickerDb):
-    res = requests.get(url)
+def tickerOnlyScrape(threadId, tickerDb):
+    res = requests.get('http://boards.4chan.org/biz/thread/'+ threadId)
     soup = bs4.BeautifulSoup(res.content,"html.parser")
     # print(soup.prettify())
     # return
