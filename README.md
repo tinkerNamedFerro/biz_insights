@@ -5,6 +5,10 @@ CryptoFind.py and CoinDict.py are nescessary files, CryptoFind Calls Coin Dict t
 
 ReadtoRFile is an optional bit of code that reads from the Excel file into R code to make it easy to examine the data with R.
 
+
+# Graphing
+Done using plotly. Json is converted to dataframes using pandas 
+
 # Changelog
 #### 1.01
 * kucoin intergration to get coin names and market data.
