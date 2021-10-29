@@ -13,7 +13,9 @@ from tqdm import tqdm
 from selenium import webdriver
 
 from CoinDict import *
-from ChanScapes import *
+from scrapers.ChanOfficial import *
+from scrapers.ChanArchieve import *
+
 from mongo_db.tickerTable import *
 
 
@@ -57,12 +59,41 @@ def TextGet():
     print("Scanning threads")
     tickerDb = MongoDB_Biz_Ticker_Mentions()
     for i in tqdm(range(0, len(tlist)-1)):
-        url = 'http://boards.4chan.org/biz/thread/' + tlist[i]
 
         # threadJson = fullThreadScrape(tlist[i][:-2],url)
-        threadJson = tickerOnlyScrape(tlist[i],url,tickerDb)
+        threadJson = tickerOnlyScrape(tlist[i],tickerDb)
 
     print('Scrape Complete')
+
+def TextGetARchieve():
+    page = 950
+
+    while True:
+        try:
+            tlist = getTidsOnPage(page)
+            print("Scanning threads")
+            tickerDb = MongoDB_Biz_Ticker_Mentions()
+            for i in tqdm(range(0, len(tlist)-1)):
+
+                # threadJson = fullThreadScrape(tlist[i][:-2],url)
+                threadJson = tickerOnlyScrapeArchieve(tlist[i],tickerDb)
+        except:
+            # Sometimes something happens like max retries exeeded or DNS error lets just skip it 
+            pass
+            
+        page = page + 1
+        print("PAGE IS: " + str(page))
+    # while True:
+        
+
+    # print("Scanning threads")
+    # tickerDb = MongoDB_Biz_Ticker_Mentions()
+    # for i in tqdm(range(0, len(tlist)-1)):
+
+    #     # threadJson = fullThreadScrape(tlist[i][:-2],url)
+    #     threadJson = tickerOnlyScrape(tlist[i],tickerDb)
+
+    # print('Scrape Complete')
 
 def Count(row):
     file = open('text.txt', 'r')
@@ -141,10 +172,12 @@ def Update():
 
 NewBook('tester')
 while True:
+
+    TextGetARchieve()
     
-    while True:
-        ThreadIDGet()
-        TextGet()
-    Update()
+    # while True:
+    #     ThreadIDGet()
+    #     TextGet()
+    # Update()
 
 

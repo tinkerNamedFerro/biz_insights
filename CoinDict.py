@@ -1,7 +1,7 @@
 from kucoin_api.Kucoin import *
 import json
 
-blackList = ["KEEP", "FLOW", "MASK", "SUPER","SCLP", "GO", "MATTER","MASK", "NFT", "TIME", "JST", "MAN", "FEAR", "LAYER", "WIN", "GOD", "BUY","PUSH", "FORM", "FRONT", "SNT", "CARD", "STND", "ASK"]
+blackList = ["KEEP", "NEAR", "STRING", "IDEA","ETF", "OPEN", "GAS", "ACT", "PLAY", "WAVES", "LOL", "SHA", "FORTH", "KSM", "UNI", "WILD", "HERO", "ELON", "OPEN", "ROUTE", "FLOW", "MASK", "SUPER","SCLP", "GO", "MATTER","MASK", "NFT", "TIME", "JST", "MAN", "FEAR", "LAYER", "WIN", "GOD", "BUY","PUSH", "FORM", "FRONT", "SNT", "CARD", "STND", "ASK"]
 
 def generateCurrenciesList():
     # calling kucoin api to get all coins
