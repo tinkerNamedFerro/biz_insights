@@ -6,6 +6,7 @@ import ciso8601
 from CoinDict import *
 
 # Load json file for coin list 
+# generateCurrenciesList()
 with open('data.json') as json_file:
     CD = json.load(json_file)
 
@@ -23,15 +24,11 @@ def checkTickerList(message):
 def tickerOnlyScrapeArchieve(threadId, tickerDb):
     res = requests.get('https://archive.wakarimasen.moe/biz/thread/'+ threadId)
     soup = bs4.BeautifulSoup(res.content,"html.parser")
-    # print(soup.prettify())
-    # return
+
     replies = soup.find_all("div", {"class": "text"})
     timeStamps = soup.find_all("time")
     comments = soup.find_all("article", {"class": "post"})
-    # print(len(replies))
-    # print(len(timeStamps))
-    # print(len(comments))
-
+    
     opProcessed = False
     for index in range(0,len(replies)):
         instance = {}

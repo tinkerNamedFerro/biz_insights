@@ -68,6 +68,10 @@ class MongoDB_Biz_Ticker_Mentions:
         result =  self.cursor.find({ ticker: { "$exists": True } })
         return  result[0]
 
+    def getAll(self):
+        result =  self.cursor.find()
+        return  result
+
     # check if ticker object exist and either adds or updates with instance 
     def addTicker(self, ticker,instance):
         # Check if ticker exists 
@@ -76,6 +80,10 @@ class MongoDB_Biz_Ticker_Mentions:
         # Create ticker
         else:
             self.cursor.insert_one({ticker:[instance]})
+
+
+    # def threadIdExists(self,threadId):
+        
 
 
 

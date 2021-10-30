@@ -4,6 +4,7 @@ import requests
 from CoinDict import *
 
 # Load json file for coin list 
+# generateCurrenciesList()
 with open('data.json') as json_file:
     CD = json.load(json_file)
 

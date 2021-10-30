@@ -24,6 +24,11 @@ Done using plotly. Json is converted to dataframes using pandas
 #### 1.03
 * update ticker blacklist
 * created scraper for chan archieves 
+#### 1.04
+* Added graphing using plotly and dash of coins mentions in /biz
+* Sort graphed coins by marketcap
+* Coin name/symbol translation between coingecko and kucoin
+* Added multithreading for archieve data collection
 
 
 # Todo
@@ -35,7 +40,7 @@ Done using plotly. Json is converted to dataframes using pandas
 1) Key kucoin api read only api keys and insert into .env (using .env_example as template)
 2)
 ```python
-python3.7 .\CryptoFinder.py
+python3.7 .\getThreads.py -s 21000 -e 21010 -p 10  
 ```
 
 ## Update requirements
