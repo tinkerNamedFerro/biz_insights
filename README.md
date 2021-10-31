@@ -5,6 +5,10 @@ CryptoFind.py and CoinDict.py are nescessary files, CryptoFind Calls Coin Dict t
 
 ReadtoRFile is an optional bit of code that reads from the Excel file into R code to make it easy to examine the data with R.
 
+
+# Graphing
+Done using plotly. Json is converted to dataframes using pandas 
+
 # Changelog
 #### 1.01
 * kucoin intergration to get coin names and market data.
@@ -20,6 +24,11 @@ ReadtoRFile is an optional bit of code that reads from the Excel file into R cod
 #### 1.03
 * update ticker blacklist
 * created scraper for chan archieves 
+#### 1.04
+* Added graphing using plotly and dash of coins mentions in /biz
+* Sort graphed coins by marketcap
+* Coin name/symbol translation between coingecko and kucoin
+* Added multithreading for archieve data collection
 
 
 # Todo
@@ -31,7 +40,7 @@ ReadtoRFile is an optional bit of code that reads from the Excel file into R cod
 1) Key kucoin api read only api keys and insert into .env (using .env_example as template)
 2)
 ```python
-python3.7 .\CryptoFinder.py
+python3.7 .\getThreads.py -s 21000 -e 21010 -p 10  
 ```
 
 ## Update requirements
