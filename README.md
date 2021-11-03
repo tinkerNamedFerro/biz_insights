@@ -29,11 +29,19 @@ Done using plotly. Json is converted to dataframes using pandas
 * Sort graphed coins by marketcap
 * Coin name/symbol translation between coingecko and kucoin
 * Added multithreading for archieve data collection
-
+#### 1.05
+* Individual coin selector
+* Show price when view individual coin
+* Pickled coingecko coin data to reduce api requests
+* Moving plotly server to main directory to be ran directly 
 
 # Todo
-* Save data into json format (mongodb)
-* Record post/comment time stamps
+* Switch from kucoin to fully coingecko for ticker finder 
+* If ticker is found in OP text add ticker instance for each comment 
+* When clicking on graph data show references
+* Get mentions moving average
+* Add daily volume with price
+* Change price/volume data to only get days from earlist mention data
 
 
 # How_to
