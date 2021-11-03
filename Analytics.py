@@ -6,11 +6,19 @@ from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
 
-def showSingleLineGraphMarket(df):
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+# import dash_daq as daq
+
+from data_parsing import *
+
+def showSingleLineGraphMarket():
+    df = getAllTickerData()
+
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
+    
     # Use the following function when accessing the value of 'my-range-slider'
     # in callbacks to transform the output value to logarithmic
     def transform_value(value):
@@ -30,6 +38,10 @@ def showSingleLineGraphMarket(df):
              }
         return switcher.get(value,"Invalid day of week")
 
+    # Drop of all tickers and an addition option to show all
+    dropDownOptions =  [{'label': "ALL", 'value': "ALL"}]
+    for i in df.ticker.unique():
+        dropDownOptions.append({'label': i, 'value': i})
 
     app.layout = html.Div([
          dbc.Form(
@@ -72,39 +84,69 @@ def showSingleLineGraphMarket(df):
                 # html.Div(id="output"),
                 dcc.Dropdown(
                     id='demo-dropdown',
-                    options=[
-                         {'label': i, 'value': i} for i in df.ticker.unique()
-                    ],
-                    value='NYC'
+                    options=dropDownOptions,
+                    value='ALL'
                 ),
-                html.Div(id='dd-output-container')
             ]),
         
         html.Div(id='output-container-range-slider'),
         dcc.Graph(id="line-chart"),
     ])
-    #  Market Cap
+    #  Market Cap and ticker selector 
     @app.callback(
         dash.dependencies.Output("line-chart", "figure"),
-        [dash.dependencies.Input('my-range-slider', 'value')])
-    def update_line_chart(value):
+        [dash.dependencies.Input('my-range-slider', 'value'),dash.dependencies.Input('demo-dropdown', 'value')])
+    def update_line_chart(market, ticker_selector):
         # converting 1-10 to market cap intervals
-        transformed_value = [transform_value(v) for v in value]
-        print(transformed_value)
+        transformed_value = [transform_value(v) for v in market]
         # Make mask where true if in range
-        mask = (df.marketCap >= transformed_value[0]) & (df.marketCap <= transformed_value[1])
-        # Only show rows where mask is true
-        fig = px.line(df[mask], x="Time", y="Mentions", color='ticker', height=800, template="plotly_dark")
-        return fig
-        #return 'You have selected "{}"'.format(value)
+        marketCapMask = (df.marketCap >= transformed_value[0]) & (df.marketCap <= transformed_value[1])
 
-    # @app.callback(
-    #     Output("output", "children"),
-    #     Input("input1", "value"),
-    #     Input("input2", "value"),
-    # )
-    # def update_output(input1, input2):
-    #     return u'Input 1 {} and Input 2 {}'.format(input1, input2)
+        # ticker selector
+        if ticker_selector and ticker_selector != "ALL": 
+            tickerMask  = (df.ticker.str.contains(ticker_selector)) == False
+        else:
+            tickerMask  = (df.ticker.str.contains("ALL")) == True
+       
+        # Create figure with secondary y-axis
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        # Only show rows where mask is true
+    
+
+        graphingDf = df[~(marketCapMask & tickerMask)]
+        grouped = graphingDf.groupby('ticker')
+
+        for name, group in grouped:
+            fig.add_trace(go.Scatter(x=group.Time, y=group.Mentions,# color='ticker',
+                        mode='lines',
+                        name=name),
+                    secondary_y=False)
+        # Show price when only one coin is selected
+        if ticker_selector and ticker_selector != "ALL": 
+            priceDF = getChartById( graphingDf['id'].iloc[0])
+            fig.add_trace(go.Scatter(x=priceDF.Time, y=priceDF.Price,
+                        mode='lines',
+                        name='Price'),
+                    secondary_y=True)
+
+        fig.update_layout(
+            autosize=False,
+            # width=500,
+            height=800,
+            # margin=dict(
+            #     l=50,
+            #     r=50,
+            #     b=100,
+            #     t=100,
+            #     pad=4
+            # ),
+            template="plotly_dark"
+        )
+
+        return fig
 
     app.run_server(debug=True)
+    
 
+
+showSingleLineGraphMarket()

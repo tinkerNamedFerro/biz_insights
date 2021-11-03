@@ -70,7 +70,8 @@ class MongoDB_Biz_Ticker_Mentions:
 
     def getAll(self):
         result =  self.cursor.find()
-        return  result
+        count =  self.cursor.count_documents({})
+        return  result, count
 
     # check if ticker object exist and either adds or updates with instance 
     def addTicker(self, ticker,instance):
