@@ -40,6 +40,8 @@ Done using plotly. Json is converted to dataframes using pandas
 * If ticker is found in OP text add ticker instance for each comment 
 * When clicking on graph data show references
 * Get mentions moving average
+* Add daily volume with price
+* Change price/volume data to only get days from earlist mention data
 
 
 # How_to
