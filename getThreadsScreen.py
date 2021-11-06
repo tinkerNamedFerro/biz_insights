@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, getopt, os 
+import sys, getopt, os, time 
 
 
 #method = "gnomeTabs"
@@ -56,7 +56,9 @@ def main(argv):
                 getThreadsCommand +
             'exec bash"')
         else:
-            command = 'screen -S getThreads' + str(count) + ' -dm bash -c "' + echoCommand(f'{instanceStartPage}-{instanceEndPage}') + echoCommand(getThreadsCommand) + getThreadsCommand + ' exec sh"'
+            command = f'screen -S getThreads-{instanceStartPage}-{instanceEndPage} -dm bash -c "' + echoCommand(f'{instanceStartPage}-{instanceEndPage}') + echoCommand(getThreadsCommand) + getThreadsCommand + ' exec sh"'
+            print(f'{instanceStartPage}-{instanceEndPage} starting')
+            time.sleep(1)
             count += 1
             os.system(command)
 
