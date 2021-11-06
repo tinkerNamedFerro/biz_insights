@@ -5,7 +5,7 @@ import sys, getopt, os
 
 #method = "gnomeTabs"
 method = "screen"
-pythonVersion = "python3.7"
+pythonVersion = "python3"
 
 outputFile = "ff23_1631270380000000.txt"
 
@@ -19,12 +19,12 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,'s:e:p:')
     except getopt.GetoptError:
-        print ('startBrainWallet.py -t1 <startPage> -t2 <endPage> -p <parallelCount>')
+        print ('startBrainWallet.py -s <startPage> -e <endPage> -p <parallelCount>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print ('startBrainWallet.py -t1 <startPage> -t2 <endPage> -p <parallelCount>')
+            print ('startBrainWallet.py -s <startPage> -e <endPage> -p <parallelCount>')
             sys.exit()
         elif opt in ("-s", "--start"):
             startPage = int(arg)
@@ -46,7 +46,7 @@ def main(argv):
         instanceStartPage = str(round(startPage+(instance*timeDelta)))
         instanceEndPage = str(round(startPage+((instance+1) *timeDelta)))
 
-        getThreadsCommand = f'{pythonVersion} -s {instanceStartPage} -e {instanceEndPage} -p 0' 
+        getThreadsCommand = f'{pythonVersion} ./getThreads.py -s {instanceStartPage} -e {instanceEndPage} -p 0' 
 
         # print(instanceStartPage + " " + instanceEndPage) 
         if method == "gnomeTabs":
