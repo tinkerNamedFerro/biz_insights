@@ -123,7 +123,7 @@ def showSingleLineGraphMarket():
                     secondary_y=False)
         # Show price when only one coin is selected
         if ticker_selector and ticker_selector != "ALL": 
-            priceDF = getChartById( graphingDf['id'].iloc[0])
+            priceDF = getChartById( graphingDf['coinGeckoId'].iloc[0])
             fig.add_trace(go.Scatter(x=priceDF.Time, y=priceDF.Price,
                         mode='lines',
                         name='Price'),
