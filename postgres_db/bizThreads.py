@@ -41,5 +41,12 @@ def addMention(ticker, row):
 
     db.update_rows(query)
 
+def getTickers():
+    query = """SELECT DISTINCT ticker FROM biztickermentions;"""
+    test = db.select_rows(query)
+    return test
 
-# init_script()
+def getTickerDataPd(ticker):
+    query = """SELECT mentionId, ticker, coinGeckoId, threadId, unixTime, datetime FROM biztickermentions WHERE ticker='%s';"""%(ticker)
+    pd = db.queryToPD(query)
+    return pd

@@ -1,5 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor
+import pandas as pd
+import pandas.io.sql as sqlio
 
 from .log import LOGGER
 
@@ -66,3 +68,9 @@ class Database:
             self.conn.commit()
             cur.close()
             return f"{cur.rowcount} rows affected."
+
+
+    def queryToPD(self,query):
+        self.connect()
+        dat = sqlio.read_sql_query(query, self.conn)
+        return dat

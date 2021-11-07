@@ -2,6 +2,7 @@ from pycoingecko import CoinGeckoAPI
 import pickle
 import time
 import pandas as pd 
+import numpy as np
 
 def coinGeckoList():
     # Get list of all coingecko

@@ -40,6 +40,10 @@ Done using plotly. Json is converted to dataframes using pandas
 * Seperated coingecko from data_parsing
 * getThread has parallel screen functionality
 * Additions to coin blacklist 
+#### 1.07 
+* Plotly reads data from postgres instead mongo 
+* Mention data sanitation improved (no need to merge kucoin and coingecko data)
+* DB function one is neat query to dataframe 
 
 # Todo
 * Switch from kucoin to fully coingecko for ticker finder 
