@@ -4,6 +4,7 @@ import requests
 import ciso8601
 
 from CoinDict import *
+from postgres_db.bizThreads import *
 
 # Load json file for coin list 
 # generateCurrenciesList()
@@ -15,10 +16,15 @@ def checkTickerList(message):
     # len(CD)
     found = []
     for row in CD:
-        checklist = [row['aka'][0],row['aka'][0].lower(),(row['name']),(row['name'].lower())]
+        checklist = [(row['name']),(row['name'].lower())]
+        # If not flagged in blacklist append
+        if row["commonTicker"] == False:
+            checklist.append(row['aka'][0].lower())
+            checklist.append(row['aka'][0].lower())
         for x in checklist:
             if x in message.split():
-                found.append(row['aka'][0]) 
+                found.append([row['aka'][0],row['coinGeckoId']]) 
+           
     return found
 
 def tickerOnlyScrapeArchieve(threadId, tickerDb):
@@ -55,10 +61,12 @@ def tickerOnlyScrapeArchieve(threadId, tickerDb):
                 #date String
                 instance["dateString"]  = timeStamps[index].get_text()
                 #-----------------------------------------------------------
+                instance["coinGeckoId"] = ticker[1]
                 # Message
                 # instance["messageText"] = message
                 #print(instance)
-                tickerDb.addTicker(ticker,instance)
+                # tickerDb.addTicker(ticker,instance)
+                addMention(ticker[0],instance)
         else:
             text = replies[index].get_text().replace(">", " ")
             # print(text)
@@ -78,8 +86,10 @@ def tickerOnlyScrapeArchieve(threadId, tickerDb):
                 #date String
                 instance["dateString"]  = timeStamps[index].get_text()
                 #-----------------------------------------------------------
+                instance["coinGeckoId"] = ticker[1]
                 #print(instance)
-                tickerDb.addTicker(ticker,instance)
+                addMention(ticker[0],instance)
+                #tickerDb.addTicker(ticker,instance)
 
 
             

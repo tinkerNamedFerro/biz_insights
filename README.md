@@ -34,6 +34,16 @@ Done using plotly. Json is converted to dataframes using pandas
 * Show price when view individual coin
 * Pickled coingecko coin data to reduce api requests
 * Moving plotly server to main directory to be ran directly 
+#### 1.06
+* Migrating to postgres 
+* Using only coingecko for ticker discovery and graphing 
+* Seperated coingecko from data_parsing
+* getThread has parallel screen functionality
+* Additions to coin blacklist 
+#### 1.07 
+* Plotly reads data from postgres instead mongo 
+* Mention data sanitation improved (no need to merge kucoin and coingecko data)
+* DB function one is neat query to dataframe 
 
 # Todo
 * Switch from kucoin to fully coingecko for ticker finder 

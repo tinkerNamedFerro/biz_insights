@@ -133,20 +133,24 @@ def main(argv):
         elif opt in ("-p", "--parallelCount"):
             parallelCount = int(arg)   
 
-    # Get work load for each worker
-    pageSegmentsDealt = (endPage - startPage)/parallelCount
+    if parallelCount == 0:
+        print(startPage)
+        TextGetArchieve(startPage,endPage)
+    else:
+        # Get work load for each worker
+        pageSegmentsDealt = (endPage - startPage)/parallelCount
 
-    # Init pool   
-    pool = mp.Pool(parallelCount)
+        # Init pool   
+        pool = mp.Pool(parallelCount)
 
-    for instance in range(0,int(parallelCount)):
-        instanceStartPage = int(round(startPage+(instance*pageSegmentsDealt)))
-        instanceEndPage = int(round(startPage+((instance+1) *pageSegmentsDealt)))
-        pool.apply_async(TextGetArchieve, args=(instanceStartPage, instanceEndPage))
-        # print(values)
+        for instance in range(0,int(parallelCount)):
+            instanceStartPage = int(round(startPage+(instance*pageSegmentsDealt)))
+            instanceEndPage = int(round(startPage+((instance+1) *pageSegmentsDealt)))
+            pool.apply_async(TextGetArchieve, args=(instanceStartPage, instanceEndPage))
+            # print(values)
 
-    pool.close()
-    pool.join() 
+        pool.close()
+    
 
 # prevent freeze support error for windows https://minerl.io/docs/notes/windows.html
 if __name__ == '__main__':
