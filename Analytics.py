@@ -5,7 +5,8 @@ import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
-
+import pandas_ta as ta
+from datetime import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 # import dash_daq as daq
@@ -14,6 +15,10 @@ from data_parsing import *
 
 def showSingleLineGraphMarket():
     df = getAllTickerData()
+
+    # Get 10 day average sort by it 
+    df["sma10"] = ta.sma(df.Mentions, length=20)
+    # df = df.sort_values(by=['sma10'])
 
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -40,7 +45,8 @@ def showSingleLineGraphMarket():
 
     # Drop of all tickers and an addition option to show all
     dropDownOptions =  [{'label': "ALL", 'value': "ALL"}]
-    for i in df.ticker.unique():
+    today = datetime.today()
+    for i in df[df['Time'] > (today - pd.offsets.Day(10))].sort_values(by='sma10', ascending=False).ticker.unique():
         dropDownOptions.append({'label': i, 'value': i})
 
     app.layout = html.Div([
@@ -73,15 +79,6 @@ def showSingleLineGraphMarket():
                     },
                     value=[0, 11]
                 ),
-                # dbc.Label(
-                #     "Minimum Average Daily Mentions",
-                #     html_for="stroke-width",
-                # ),
-                # html.I("Try typing in input 1 & 2, and observe how debounce is impacting the callbacks. Press Enter and/or Tab key in Input 2 to cancel the delay"),
-                # html.Br(),
-                # dcc.Input(id="input1", type="text", placeholder="", style={'marginRight':'10px'}),
-                # dcc.Input(id="input2", type="text", placeholder="", debounce=True),
-                # html.Div(id="output"),
                 dcc.Dropdown(
                     id='demo-dropdown',
                     options=dropDownOptions,
@@ -92,6 +89,7 @@ def showSingleLineGraphMarket():
         html.Div(id='output-container-range-slider'),
         dcc.Graph(id="line-chart"),
     ])
+
     #  Market Cap and ticker selector 
     @app.callback(
         dash.dependencies.Output("line-chart", "figure"),
@@ -104,7 +102,7 @@ def showSingleLineGraphMarket():
 
         # ticker selector
         if ticker_selector and ticker_selector != "ALL": 
-            tickerMask  = (df.ticker.str.contains(ticker_selector)) == False
+            tickerMask  = (df.ticker.str.fullmatch(ticker_selector)) == False
         else:
             tickerMask  = (df.ticker.str.contains("ALL")) == True
        
@@ -120,33 +118,41 @@ def showSingleLineGraphMarket():
             fig.add_trace(go.Scatter(x=group.Time, y=group.Mentions,# color='ticker',
                         mode='lines',
                         name=name),
+                    row=1, 
+                    col=1,
                     secondary_y=False)
         # Show price when only one coin is selected
         if ticker_selector and ticker_selector != "ALL": 
-            priceDF = getChartById( graphingDf['coinGeckoId'].iloc[0])
+            # priceDF = getChartById( graphingDf['coinGeckoId'].iloc[0])
+            priceDF = getHourlyChartById( graphingDf['coinGeckoId'].iloc[0])
+            # Only include pricing data which mention data exists for
+            priceDF = priceDF[priceDF.Time >= df.Time.min()]
             fig.add_trace(go.Scatter(x=priceDF.Time, y=priceDF.Price,
                         mode='lines',
-                        name='Price'),
+                        name='Price'), 
+                    row=1,
+                    col=1,
                     secondary_y=True)
+            # Add SMA to graph
+            fig.add_trace(go.Scatter(x=graphingDf.Time, y=graphingDf.sma10,
+                        mode='lines',
+                        name='SMA10'), 
+                    row=1,
+                    col=1,
+                    secondary_y=False)
 
+            
+
+        # Change graph height and theme
         fig.update_layout(
             autosize=False,
-            # width=500,
             height=800,
-            # margin=dict(
-            #     l=50,
-            #     r=50,
-            #     b=100,
-            #     t=100,
-            #     pad=4
-            # ),
             template="plotly_dark"
         )
 
         return fig
 
     app.run_server(debug=True)
-    
 
 
 showSingleLineGraphMarket()

@@ -44,14 +44,16 @@ Done using plotly. Json is converted to dataframes using pandas
 * Plotly reads data from postgres instead mongo 
 * Mention data sanitation improved (no need to merge kucoin and coingecko data)
 * DB function one is neat query to dataframe 
+#### 1.08
+* Removed more non out of vocabulary tickers
+* Add 10 day moving average to smooth mention data
+* Attmpted MACD and 3EMA TA on mention data
+* Added permanent loop for get threads
 
 # Todo
-* Switch from kucoin to fully coingecko for ticker finder 
 * If ticker is found in OP text add ticker instance for each comment 
 * When clicking on graph data show references
-* Get mentions moving average
 * Add daily volume with price
-* Change price/volume data to only get days from earlist mention data
 
 
 # How_to
