@@ -136,6 +136,9 @@ def main(argv):
     if parallelCount == 0:
         print(startPage)
         TextGetArchieve(startPage,endPage)
+    elif parallelCount == -1:
+        while True:
+            TextGetArchieve(startPage,endPage)
     else:
         # Get work load for each worker
         pageSegmentsDealt = (endPage - startPage)/parallelCount
