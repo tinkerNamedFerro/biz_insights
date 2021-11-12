@@ -49,6 +49,8 @@ Done using plotly. Json is converted to dataframes using pandas
 * Add 10 day moving average to smooth mention data
 * Attmpted MACD and 3EMA TA on mention data
 * Added permanent loop for get threads
+#### 1.09 
+* Stlying improvement
 
 # Todo
 * If ticker is found in OP text add ticker instance for each comment 
