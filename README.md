@@ -67,5 +67,5 @@ python3.7 .\getThreads.py -s 21000 -e 21010 -p 10
 
 ## Update requirements
 ```py
-python3.7 -m pipreqs.pipreqs --force
+python3.7 -m pipreqs.pipreqs --force --encoding=utf8
 ```
